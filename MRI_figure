@@ -1,0 +1,48 @@
+# Import necessary libraries
+import numpy as np
+import matplotlib.pyplot as plt
+from nilearn import plotting
+from nilearn.image import new_img_like
+
+# Create dummy MRI data (3D arrays)
+dims = (128, 128, 128)  # Dimensions of the brain scan
+
+# Structural MRI (sMRI): Simulate a brain with different regions
+sMRI = np.zeros(dims)
+sMRI[30:90, 30:90, 30:90] = 1  # Simulate a brain mask
+sMRI[40:60, 40:60, 40:60] = 2  # Highlight a specific region (e.g., gray matter)
+
+# Functional MRI (fMRI): Simulate activation in a specific region
+fMRI = np.zeros(dims)
+fMRI[50:70, 50:70, 50:70] = np.random.uniform(0.5, 1, size=(20, 20, 20))  # Simulate activation
+
+# Diffusion MRI (dMRI): Simulate fiber tracts
+dMRI = np.zeros(dims)
+dMRI[60:80, 60:80, 60:80] = 1  # Simulate a fiber tract
+
+# Convert arrays to NIfTI-like images using Nilearn
+affine = np.eye(4)  # Identity affine matrix
+sMRI_img = new_img_like(sMRI, sMRI, affine=affine)
+fMRI_img = new_img_like(fMRI, fMRI, affine=affine)
+dMRI_img = new_img_like(dMRI, dMRI, affine=affine)
+
+# Visualize the dummy data
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+# Structural MRI (sMRI)
+plotting.plot_anat(sMRI_img, axes=axes[0], title="Structural MRI (sMRI)\nGray Matter Highlighted", 
+                   draw_cross=False, cmap='gray')
+axes[0].set_xlabel("sMRI")
+
+# Functional MRI (fMRI)
+plotting.plot_anat(fMRI_img, axes=axes[1], title="Functional MRI (fMRI)\nActivation Region", 
+                   draw_cross=False, cmap='hot')
+axes[1].set_xlabel("fMRI")
+
+# Diffusion MRI (dMRI)
+plotting.plot_anat(dMRI_img, axes=axes[2], title="Diffusion MRI (dMRI)\nFiber Tract", 
+                   draw_cross=False, cmap='viridis')
+axes[2].set_xlabel("dMRI")
+
+plt.tight_layout()
+plt.show()
